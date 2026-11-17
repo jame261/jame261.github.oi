@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Special Message For You Kim 💗</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: #fce7f3;
+    font-family: Arial, sans-serif;
+}
+
+.heart {
+    position: absolute;
+    bottom: -40px;
+    animation: floatUp linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes floatUp {
+    to {
+        transform: translateY(-110vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+.card {
+    position: relative;
+    z-index: 1;
+    width: min(520px, calc(100% - 30px));
+    min-height: 500px;
+    padding: 35px 25px;
+    background: #fff9fc;
+    border: 2px solid #f9a8d4;
+    text-align: center;
+    box-shadow: 0 10px 35px #db277733;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+h2 {
+    color: #db2777;
+    font-size: 22px;
+}
+
+.envelope {
+    width: 260px;
+    height: 165px;
+    background: #ec4899;
+    position: relative;
+    margin: 35px auto;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.envelope::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    border-left: 130px solid transparent;
+    border-right: 130px solid transparent;
+    border-top: 90px solid #fce7f3;
+}
+
+.envelope span {
+    position: relative;
+    margin-top: 65px;
+    color: #db2777;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 13px 35px;
+    background: #f43f5e;
+    color: white;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #db2777;
+    transform: scale(1.05);
+}
+
+.message {
+    display: none;
+    color: #db2777;
+    line-height: 1.8;
+    font-size: 15px;
+    margin: 20px 0;
+    animation: appear 0.8s ease;
+}
+
+.message h1 {
+    color: #f43f5e;
+    font-size: 35px;
+}
+
+.big-heart {
+    font-size: 55px;
+    margin: 15px;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 400px) {
+    .card {
+        padding: 25px 15px;
+    }
+
+    .message {
+        font-size: 13px;
+    }
+
+    .envelope {
+        width: 220px;
+    }
+
+    .envelope::before {
+        border-left-width: 110px;
+        border-right-width: 110px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>💗 A LITTLE MESSAGE 💗</h2>
+
+    <div id="envelope" class="envelope">
+        <span>Click to open 💌</span>
+    </div>
+
+    <div id="message" class="message">
+        <h1>For you, kim!</h1>
+Hi Kim! Who would've thought na sa school concert pa tayo magkakakilala HAHAHA. I'm really glad na nakilala kita. Honestly, gusto pa talaga kitang makilala nang mas mabuti. I hope you know how special you are to me. Sorry kung minsan makulit ako, pero gagawin ko ang lahat mapasaya kalang. 
+
+And kahit minsan ang tagal mong mag-reply, okay lang, maghihintay naman ako. Kasi ikaw lang talaga yung gusto kong kausapin. Hindi naman ako nagmamadali, basta makausap lang kita, masaya na ako. 
+
+By the way, ang cute-cute mo kaya, minsan hindi ko alam kung paano ka kakausapin nang hindi kinikilig HAHAHA. Feeling ko ako na ata ang pinaka-swerteng kumag kasi subrang ganda mo. Sana hindi ka magsawa sa kakulitan ko. I hope I can make you smile kahit sa simpleng messages na ito. Always take care, Kim! 😊💗
+        <p>
+         
+        <div class="big-heart">❤️</div>
+    </div>
+
+    <button id="toggleButton" onclick="toggleLetter()">
+        Open letter
+    </button>
+
+</div>
+
+<script>
+let isOpen = false;
+
+function toggleLetter() {
+    isOpen = !isOpen;
+
+    document.getElementById("envelope").style.display =
+        isOpen ? "none" : "flex";
+
+    document.getElementById("message").style.display =
+        isOpen ? "block" : "none";
+
+    document.getElementById("toggleButton").textContent =
+        isOpen ? "Close letter" : "Open letter";
+}
+
+// Floating hearts
+const colors = ["#db2777", "#f43f5e", "#e879f9"];
+
+function createHeart() {
+    const heart = document.createElement("div");
+
+    heart.className = "heart";
+    heart.textContent = "♥";
+
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (12 + Math.random() * 20) + "px";
+    heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+    heart.style.animationDuration = (5 + Math.random() * 7) + "s";
+
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 12000);
+}
+
+setInterval(createHeart, 400);
+</script>
+
+</body>
+</html>
