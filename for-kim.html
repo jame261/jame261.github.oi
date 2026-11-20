@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="tl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111a33">
+  <title>My door is always open for you — isang liham</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --night: #111a33;
+      --paper: #fffaf0;
+      --ink: #3a4058;
+      --lavender: #d7ceff;
+      --glow: #ffd99c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      overflow-x: hidden;
+      color: #f7f1ff;
+      background:
+        radial-gradient(ellipse at 50% 94%, rgba(86,75,143,.28), transparent 44%),
+        radial-gradient(ellipse at 8% 8%, rgba(54,89,145,.24), transparent 39%),
+        linear-gradient(160deg, #10182e, #182544 55%, #252343);
+      font-family: "Trebuchet MS", Arial, sans-serif;
+    }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .sky::before,
+    .sky::after {
+      position: absolute;
+      inset: -20%;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.92) 1px, transparent 1.8px),
+        radial-gradient(circle, rgba(205,211,255,.72) 1px, transparent 1.8px);
+      background-size: 79px 79px, 127px 127px;
+      background-position: 8px 17px, 38px 61px;
+      content: "";
+      animation: star-drift 70s linear infinite;
+    }
+
+    .sky::after {
+      opacity: .42;
+      transform: scale(1.2);
+      animation-duration: 100s;
+      animation-direction: reverse;
+    }
+
+    .glow {
+      position: fixed;
+      top: 9vh;
+      right: 12vw;
+      width: 110px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle at 37% 35%, #fffef2, #f8e6bf 55%, #dbd3fa 100%);
+      box-shadow: 0 0 32px rgba(255,239,197,.3), 0 0 100px rgba(205,195,255,.15);
+      opacity: .86;
+      pointer-events: none;
+    }
+
+    .glow::after {
+      position: absolute;
+      top: -12px;
+      left: 32px;
+      width: 105px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #141d37;
+      content: "";
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      min-height: 100svh;
+      place-items: center;
+      padding: 48px 18px;
+    }
+
+    .message-card {
+      width: min(100%, 590px);
+      padding: 42px clamp(23px, 7vw, 58px) 36px;
+      border: 1px solid rgba(255,255,255,.19);
+      border-radius: 28px;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.035)),
+        rgba(20,29,55,.75);
+      box-shadow: 0 28px 80px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.1);
+      text-align: center;
+      backdrop-filter: blur(12px);
+      animation: card-arrive 1s both;
+    }
+
+    .bouquet {
+      display: block;
+      width: 154px;
+      height: 137px;
+      margin: 0 auto 15px;
+      overflow: visible;
+      filter: drop-shadow(0 8px 13px rgba(255,154,195,.2));
+    }
+
+    .bouquet .flower {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: flower-sway 3.2s ease-in-out infinite alternate;
+    }
+
+    .bouquet .flower:nth-of-type(2n) { animation-delay: -.8s; }
+    .bouquet .flower:nth-of-type(3n) { animation-delay: -1.5s; }
+
+    .bouquet .stem {
+      fill: none;
+      stroke: #8dbb91;
+      stroke-linecap: round;
+      stroke-width: 3;
+    }
+
+    .bouquet .leaf {
+      fill: #85b889;
+      stroke: #b7d7a8;
+      stroke-width: 1;
+    }
+
+    .bouquet .wrap {
+      fill: url(#wrap-color);
+      stroke: #ffd9e7;
+      stroke-width: 1.5;
+    }
+
+    .bouquet .wrap-fold {
+      fill: none;
+      stroke: rgba(255,255,255,.56);
+      stroke-linecap: round;
+      stroke-width: 1.2;
+    }
+
+    .bouquet .ribbon {
+      fill: #d78ac0;
+      stroke: #ffe2f0;
+      stroke-width: 1.5;
+    }
+
+    .hug-button {
+      border: 1px solid rgba(224,211,255,.48);
+      border-radius: 999px;
+      padding: 12px 19px;
+      color: #f7edff;
+      background: rgba(174,157,221,.13);
+      box-shadow: inset 0 1px rgba(255,255,255,.08);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s, background .2s, box-shadow .2s;
+    }
+
+    .hug-button:hover {
+      transform: translateY(-2px);
+      background: rgba(174,157,221,.24);
+      box-shadow: 0 7px 22px rgba(172,150,224,.13);
+    }
+
+    .hug-button:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 4px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 11px;
+    }
+
+    .hug-response {
+      min-height: 20px;
+      margin: 13px 0 0;
+      color: #ffe5bd;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .hug-heart {
+      position: fixed;
+      z-index: 4;
+      color: #ffb8d3;
+      pointer-events: none;
+      text-shadow: 0 0 14px rgba(255,184,211,.62);
+      animation: hug-float var(--duration) ease-out forwards;
+    }
+
+    .hug-stage {
+      display: none;
+      position: relative;
+      min-height: 190px;
+      place-items: center;
+      margin: 12px auto 0;
+    }
+
+    .hug-stage.visible {
+      display: grid;
+      animation: hug-reveal .55s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .teddy {
+      position: relative;
+      width: 140px;
+      height: 165px;
+      transform-origin: 50% 100%;
+    }
+
+    .teddy-ear {
+      position: absolute;
+      z-index: 1;
+      top: 4px;
+      width: 43px;
+      height: 45px;
+      border: 2px solid #845c55;
+      border-radius: 50%;
+      background: #d7a07a;
+    }
+
+    .teddy-ear::after {
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: #efb3b0;
+      content: "";
+    }
+
+    .teddy-ear.left { left: 18px; }
+    .teddy-ear.right { right: 18px; }
+
+    .teddy-head {
+      position: absolute;
+      z-index: 2;
+      top: 8px;
+      left: 25px;
+      width: 90px;
+      height: 82px;
+      border: 2px solid #845c55;
+      border-radius: 48% 48% 45% 45%;
+      background: linear-gradient(145deg, #e0b18a, #bd8565);
+      box-shadow: inset -5px -5px rgba(112,67,54,.08);
+    }
+
+    .teddy-eye {
+      position: absolute;
+      top: 34px;
+      width: 6px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4c3538;
+    }
+
+    .teddy-eye.left { left: 25px; }
+    .teddy-eye.right { right: 25px; }
+
+    .teddy-muzzle {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      width: 35px;
+      height: 26px;
+      border-radius: 50%;
+      background: #f5d9c2;
+      transform: translateX(-50%);
+    }
+
+    .teddy-muzzle::before {
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      width: 7px;
+      height: 5px;
+      border-radius: 50%;
+      background: #573d3d;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .teddy-muzzle::after {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      width: 10px;
+      height: 6px;
+      border-bottom: 1px solid #8a5c55;
+      border-radius: 0 0 50% 50%;
+      content: "";
+      transform: translateX(-50%);
+    }
+
+    .teddy-body {
+      position: absolute;
+      z-index: 2;
+      top: 79px;
+      left: 37px;
+      width: 66px;
+      height: 68px;
+      border: 2px solid #845c55;
+      border-radius: 45% 45% 38% 38%;
+      background: linear-gradient(145deg, #d6a07a, #b9785f);
+    }
+
+    .teddy-belly {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      width: 38px;
+      height: 42px;
+      border-radius: 50%;
+      background: #f1d3b8;
+      transform: translateX(-50%);
+    }
+
+    .hug-arm {
+      position: absolute;
+      z-index: 4;
+      top: 88px;
+      width: 32px;
+      height: 54px;
+      border: 2px solid #845c55;
+      border-radius: 48%;
+      background: #c98d6d;
+      transform-origin: 50% 12%;
+      transition: transform .48s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .hug-arm.left { left: 20px; transform: rotate(-48deg); }
+    .hug-arm.right { right: 20px; transform: rotate(48deg); }
+
+    .hug-arm::after {
+      position: absolute;
+      right: 5px;
+      bottom: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #f1d3b8;
+      content: "";
+    }
+
+    .hug-stage.hugging .hug-arm.left { transform: rotate(34deg) translateX(7px); }
+    .hug-stage.hugging .hug-arm.right { transform: rotate(-34deg) translateX(-7px); }
+
+    .teddy-heart {
+      position: absolute;
+      z-index: 3;
+      top: 94px;
+      left: 50%;
+      color: #f178a4;
+      font-size: 24px;
+      text-shadow: 0 1px 2px rgba(255,255,255,.7);
+      transform: translateX(-50%);
+      animation: heart-beat 1.2s ease-in-out infinite;
+    }
+
+    .kiss {
+      position: absolute;
+      z-index: 5;
+      top: 10px;
+      right: -14px;
+      opacity: 0;
+      pointer-events: none;
+      font-size: 30px;
+      filter: drop-shadow(0 2px 6px rgba(246,131,177,.4));
+    }
+
+    .hug-stage.hugging .teddy {
+      animation: bear-squeeze .8s ease-in-out 2;
+    }
+
+    .hug-stage.hugging .kiss {
+      animation: send-kiss 1.5s .1s cubic-bezier(.2,.8,.2,1) both;
+    }
+
+    .hug-label {
+      position: absolute;
+      bottom: -1px;
+      left: 50%;
+      width: max-content;
+      max-width: 90%;
+      color: #e6daf7;
+      font-size: 11px;
+      font-weight: 700;
+      transform: translateX(-50%);
+    }
+
+    h1 {
+      margin: 0;
+      color: #fff8eb;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(32px, 8vw, 49px);
+      font-weight: 500;
+      letter-spacing: -.8px;
+      line-height: 1.1;
+    }
+
+    .read-button {
+      border: 1px solid rgba(255,231,190,.65);
+      border-radius: 999px;
+      padding: 13px 22px;
+      color: #2e2a41;
+      background: linear-gradient(135deg, #ffe9be, #eac9df);
+      box-shadow: 0 7px 22px rgba(255,217,156,.16);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .read-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(255,217,156,.25);
+    }
+
+    .read-button:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 4px;
+    }
+
+    .letter-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      opacity: 0;
+      overflow: hidden;
+      transition: grid-template-rows .75s cubic-bezier(.2,.8,.2,1), opacity .55s ease;
+    }
+
+    .letter-wrap.open {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .letter-clip {
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .letter {
+      margin-top: 25px;
+      padding: 27px clamp(18px, 5vw, 34px);
+      border-radius: 16px;
+      color: var(--ink);
+      background:
+        repeating-linear-gradient(transparent 0 31px, rgba(107,117,160,.1) 32px),
+        var(--paper);
+      box-shadow: 0 12px 32px rgba(0,0,0,.2);
+      text-align: left;
+      transform: translateY(18px);
+      transition: transform .75s cubic-bezier(.2,.8,.2,1);
+    }
+
+    .letter-wrap.open .letter { transform: translateY(0); }
+
+    .letter-tag {
+      margin: 0 0 14px;
+      color: #947a9d;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .cat-hug-art {
+      display: block;
+      width: min(250px, 85%);
+      height: auto;
+      margin: 0 auto 16px;
+      overflow: visible;
+    }
+
+    .cat-hug-art .black-cat {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: black-cat-squeeze 2.8s ease-in-out infinite;
+    }
+
+    .cat-hug-art .white-cat {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: white-cat-nuzzle 2.8s ease-in-out infinite;
+    }
+
+    .cat-hug-art .hugging-paw {
+      transform-box: fill-box;
+      transform-origin: 10% 12%;
+      animation: paw-squeeze 2.8s ease-in-out infinite;
+    }
+
+    .cat-hug-art .float-heart {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: cat-heart-float 2.2s ease-in-out infinite;
+    }
+
+    .cat-hug-art .float-heart:nth-of-type(2) { animation-delay: -1.1s; }
+
+    .gift-cat-art {
+      display: block;
+      width: min(280px, 94%);
+      height: auto;
+      margin: 0 auto 10px;
+      overflow: visible;
+    }
+
+    .gift-cat-art .gift-black {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: gift-cat-bob 2.4s ease-in-out infinite;
+    }
+
+    .gift-cat-art .gift-white {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: gift-cat-sway 3s ease-in-out infinite;
+    }
+
+    .gift-cat-art .gift-tail {
+      transform-box: fill-box;
+      transform-origin: 100% 80%;
+      animation: tail-wag 1.4s ease-in-out infinite alternate;
+    }
+
+    .gift-cat-art .gift-arm {
+      transform-box: fill-box;
+      transform-origin: 100% 50%;
+      animation: offer-flower 2.4s ease-in-out infinite;
+    }
+
+    .gift-cat-art .gift-flower {
+      transform-box: fill-box;
+      transform-origin: center bottom;
+      animation: flower-present 2.4s ease-in-out infinite;
+    }
+
+    .letter p {
+      margin: 0 0 13px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 15px;
+      line-height: 1.9;
+    }
+
+    .letter p:last-child { margin-bottom: 0; }
+
+    .letter-word {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    .letter.typing .letter-word {
+      animation: word-appear .24s calc(var(--word-index) * 12ms) both;
+    }
+
+    .signoff {
+      margin-top: 18px !important;
+      color: #9c5277;
+      font-style: italic;
+      text-align: right;
+    }
+
+    .soft-reminder {
+      margin: 21px 0 0;
+      color: #c3bfd8;
+      font-size: 11px;
+      letter-spacing: .3px;
+    }
+
+    .soft-reminder span {
+      display: inline-block;
+      margin-right: 5px;
+      color: #ffd99c;
+    }
+
+    @keyframes star-drift {
+      to { transform: translate3d(35px, 55px, 0); }
+    }
+
+    @keyframes flower-sway {
+      from { rotate: -4deg; }
+      to { rotate: 4deg; }
+    }
+
+    @keyframes hug-float {
+      0% { opacity: 0; transform: translate(-50%, 0) scale(.5) rotate(-12deg); }
+      15% { opacity: 1; }
+      100% { opacity: 0; transform: translate(calc(-50% + var(--drift)), -125px) scale(1.1) rotate(18deg); }
+    }
+
+    @keyframes hug-reveal {
+      from { opacity: 0; transform: translateY(10px) scale(.92); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes bear-squeeze {
+      0%, 100% { transform: scale(1) rotate(0); }
+      45% { transform: scale(1.08,.96) rotate(-2deg); }
+      70% { transform: scale(.98,1.03) rotate(2deg); }
+    }
+
+    @keyframes heart-beat {
+      0%, 100% { scale: 1; }
+      50% { scale: 1.22; }
+    }
+
+    @keyframes send-kiss {
+      0% { opacity: 0; transform: translate(0, 10px) scale(.45) rotate(-15deg); }
+      20% { opacity: 1; }
+      70% { opacity: 1; transform: translate(40px, -38px) scale(1.25) rotate(12deg); }
+      100% { opacity: 0; transform: translate(65px, -65px) scale(1.4) rotate(18deg); }
+    }
+
+    @keyframes card-arrive {
+      from { opacity: 0; transform: translateY(15px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes word-appear {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes black-cat-squeeze {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-3px) rotate(-2deg); }
+    }
+
+    @keyframes white-cat-nuzzle {
+      0%, 100% { transform: translateX(0) rotate(0); }
+      50% { transform: translateX(4px) rotate(2deg); }
+    }
+
+    @keyframes paw-squeeze {
+      0%, 100% { transform: rotate(0); }
+      45%, 70% { transform: rotate(-7deg); }
+    }
+
+    @keyframes cat-heart-float {
+      0%, 100% { opacity: .35; transform: translateY(3px) scale(.8); }
+      50% { opacity: 1; transform: translateY(-6px) scale(1.12); }
+    }
+
+    @keyframes gift-cat-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+
+    @keyframes gift-cat-sway {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(-2deg); }
+    }
+
+    @keyframes tail-wag {
+      from { transform: rotate(-8deg); }
+      to { transform: rotate(9deg); }
+    }
+
+    @keyframes offer-flower {
+      0%, 100% { transform: rotate(0); }
+      50% { transform: rotate(-5deg); }
+    }
+
+    @keyframes flower-present {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-5px) rotate(5deg); }
+    }
+
+    @media (max-width: 480px) {
+      .page { padding: 28px 14px; }
+      .message-card { padding-top: 32px; padding-bottom: 28px; border-radius: 23px; }
+      .glow { top: 4vh; right: 5vw; width: 76px; }
+      .glow::after { left: 24px; width: 75px; }
+      .bouquet { width: 139px; height: 124px; margin-bottom: 12px; }
+      .letter { padding-top: 22px; padding-bottom: 22px; }
+      .letter p { font-size: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+      .letter.typing .letter-word { animation-delay: 0ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <div class="glow" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="message-card" aria-labelledby="page-title">
+      <svg class="bouquet" viewBox="0 0 170 150" role="img" aria-label="Munting bouquet ng pink na bulaklak">
+        <defs>
+          <linearGradient id="wrap-color" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f6b6d2"></stop>
+            <stop offset="1" stop-color="#bc83bf"></stop>
+          </linearGradient>
+          <linearGradient id="petal-color" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffe2ee"></stop>
+            <stop offset=".58" stop-color="#f58fba"></stop>
+            <stop offset="1" stop-color="#d95191"></stop>
+          </linearGradient>
+        </defs>
+        <path class="stem" d="M83 135Q65 100 35 51M84 135Q71 91 61 34M85 135V48M86 135Q101 88 110 32M87 135Q109 99 136 51"></path>
+        <path class="leaf" d="M61 102Q39 87 44 108Q54 114 66 108Z"></path>
+        <path class="leaf" d="M104 108Q127 88 128 109Q116 119 103 114Z"></path>
+        <path class="leaf" d="M77 87Q57 76 60 95Q69 100 79 92Z"></path>
+        <path class="wrap" d="M43 69Q84 78 127 69L111 132Q85 146 59 132Z"></path>
+        <path class="wrap-fold" d="M46 72L84 137L124 72M84 137L84 79"></path>
+        <path class="ribbon" d="M82 116Q65 103 66 116Q68 126 83 120Q100 128 103 116Q103 105 85 116Z"></path>
+        <circle cx="84" cy="118" r="4" fill="#ffe5ef"></circle>
+        <g class="flower" transform="translate(35 49)">
+          <ellipse cx="0" cy="-10" rx="7" ry="12" fill="url(#petal-color)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="12" fill="url(#petal-color)" transform="rotate(72)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="12" fill="url(#petal-color)" transform="rotate(144)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="12" fill="url(#petal-color)" transform="rotate(216)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="12" fill="url(#petal-color)" transform="rotate(288)"></ellipse>
+          <circle r="4.5" fill="#ffe6aa"></circle>
+        </g>
+        <g class="flower" transform="translate(61 32)">
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(72)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(144)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(216)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(288)"></ellipse>
+          <circle r="4.5" fill="#ffe6aa"></circle>
+        </g>
+        <g class="flower" transform="translate(85 46)">
+          <ellipse cx="0" cy="-10" rx="7" ry="11" fill="url(#petal-color)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11" fill="url(#petal-color)" transform="rotate(72)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11" fill="url(#petal-color)" transform="rotate(144)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11" fill="url(#petal-color)" transform="rotate(216)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11" fill="url(#petal-color)" transform="rotate(288)"></ellipse>
+          <circle r="4.5" fill="#ffe6aa"></circle>
+        </g>
+        <g class="flower" transform="translate(110 31)">
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(72)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(144)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(216)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7.5" ry="12.5" fill="url(#petal-color)" transform="rotate(288)"></ellipse>
+          <circle r="4.5" fill="#ffe6aa"></circle>
+        </g>
+        <g class="flower" transform="translate(136 49)">
+          <ellipse cx="0" cy="-10" rx="7" ry="11.5" fill="url(#petal-color)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11.5" fill="url(#petal-color)" transform="rotate(72)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11.5" fill="url(#petal-color)" transform="rotate(144)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11.5" fill="url(#petal-color)" transform="rotate(216)"></ellipse>
+          <ellipse cx="0" cy="-10" rx="7" ry="11.5" fill="url(#petal-color)" transform="rotate(288)"></ellipse>
+          <circle r="4.5" fill="#ffe6aa"></circle>
+        </g>
+      </svg>
+      <h1 id="page-title">My door is always open for you</h1>
+
+      <div class="actions">
+        <button class="read-button" id="readButton" type="button" aria-expanded="false" aria-controls="letterWrap">
+          Buksan ang liham ✦
+        </button>
+        <button class="hug-button" id="hugButton" type="button">Send a teddy hug & kiss 💋</button>
+      </div>
+      <div class="hug-stage" id="hugStage" aria-hidden="true" role="img" aria-label="Animated teddy bear na yumayakap at nagpapadala ng halik">
+        <div class="teddy">
+          <span class="teddy-ear left"></span>
+          <span class="teddy-ear right"></span>
+          <div class="teddy-head">
+            <span class="teddy-eye left"></span>
+            <span class="teddy-eye right"></span>
+            <span class="teddy-muzzle"></span>
+          </div>
+          <div class="teddy-body"><span class="teddy-belly"></span></div>
+          <span class="hug-arm left"></span>
+          <span class="hug-arm right"></span>
+          <span class="teddy-heart" aria-hidden="true">♥</span>
+        </div>
+        <span class="kiss" aria-hidden="true">💋</span>
+        <span class="hug-label">Isang yakap at halik para sa'yo 🤍</span>
+      </div>
+      <p class="hug-response" id="hugResponse" aria-live="polite"></p>
+
+      <div class="letter-wrap" id="letterWrap" aria-hidden="true">
+        <div class="letter-clip">
+          <article class="letter" aria-label="Liham ng paghingi ng tawad">
+            <p class="letter-tag">for you my princess</p>
+            <svg class="gift-cat-art" viewBox="0 0 320 180" role="img" aria-label="Isang itim na pusa ang nagbibigay ng dilaw na bulaklak sa puting pusa">
+              <ellipse cx="157" cy="166" rx="127" ry="7" fill="#eadce4"></ellipse>
+              <path class="gift-tail" d="M66 137C46 147 33 138 39 125C42 118 51 117 54 124" fill="none" stroke="#34313a" stroke-width="4" stroke-linecap="round"></path>
+              <g class="gift-black">
+                <path d="M208 87C193 103 192 137 196 164H286C284 134 278 105 259 87C244 76 221 77 208 87Z" fill="#29272d" stroke="#17161a" stroke-width="3" stroke-linejoin="round"></path>
+                <path d="M201 82C189 71 190 53 200 41L199 19Q199 12 206 17L223 30Q240 23 256 30L274 15Q281 12 282 20L286 46C298 58 295 76 283 87C270 100 214 100 201 82Z" fill="#29272d" stroke="#17161a" stroke-width="3" stroke-linejoin="round"></path>
+                <ellipse cx="222" cy="65" rx="3.5" ry="5" fill="#080808"></ellipse>
+                <ellipse cx="263" cy="65" rx="3.5" ry="5" fill="#080808"></ellipse>
+                <path d="M238 75Q242 79 246 75M242 78Q238 84 233 80M242 78Q247 84 251 80" fill="none" stroke="#080808" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M197 67L185 64M197 74L183 74M285 67L297 64M285 74L299 74" fill="none" stroke="#17161a" stroke-width="2" stroke-linecap="round"></path>
+              </g>
+              <g class="gift-white">
+                <path d="M68 116C58 132 55 148 52 164M136 116C145 132 151 149 157 164" fill="none" stroke="#34313a" stroke-width="4" stroke-linecap="round"></path>
+                <path d="M57 83C47 73 48 56 58 45L57 25Q57 19 64 23L80 36Q96 30 112 37L128 23Q135 20 136 27L139 50C150 61 148 78 137 88C124 101 70 101 57 83Z" fill="#fffdfb" stroke="#34313a" stroke-width="3" stroke-linejoin="round"></path>
+                <ellipse cx="80" cy="64" rx="3.5" ry="5" fill="#17161a"></ellipse>
+                <ellipse cx="119" cy="64" rx="3.5" ry="5" fill="#17161a"></ellipse>
+                <path d="M94 73Q99 78 104 73M99 77Q94 84 89 79M99 77Q104 84 109 79" fill="none" stroke="#34313a" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M52 62L41 59M52 69L38 69M143 62L154 59M143 69L157 69" fill="none" stroke="#34313a" stroke-width="2" stroke-linecap="round"></path>
+                <path d="M77 91C92 83 105 84 118 91M83 94Q99 110 114 94" fill="none" stroke="#34313a" stroke-width="3" stroke-linecap="round"></path>
+              </g>
+              <g class="gift-arm">
+                <path d="M209 96C194 101 183 105 169 105L150 101C144 100 140 104 143 109C148 117 165 120 184 117C197 115 207 112 215 107Z" fill="#29272d" stroke="#17161a" stroke-width="3" stroke-linejoin="round"></path>
+                <path d="M149 102L141 86" fill="none" stroke="#29272d" stroke-width="3" stroke-linecap="round"></path>
+              </g>
+              <g class="gift-flower">
+                <path d="M140 90L136 76" fill="none" stroke="#618a59" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M138 85Q128 78 129 86Q133 91 140 89M138 84Q146 75 148 82Q145 87 139 88" fill="#8dbb82"></path>
+                <circle cx="136" cy="69" r="6" fill="#ffd45c" stroke="#453c31" stroke-width="2"></circle>
+                <circle cx="127" cy="69" r="6" fill="#ffd45c" stroke="#453c31" stroke-width="2"></circle>
+                <circle cx="132" cy="61" r="6" fill="#ffd45c" stroke="#453c31" stroke-width="2"></circle>
+                <circle cx="141" cy="62" r="6" fill="#ffd45c" stroke="#453c31" stroke-width="2"></circle>
+                <circle cx="145" cy="70" r="6" fill="#ffd45c" stroke="#453c31" stroke-width="2"></circle>
+                <circle cx="136" cy="68" r="3" fill="#a96c45"></circle>
+              </g>
+            </svg>
+            <svg class="cat-hug-art" viewBox="0 0 280 190" role="img" aria-label="Dalawang cute na pusa na banayad na magkayakap">
+              <ellipse cx="145" cy="174" rx="82" ry="8" fill="#eadce4"></ellipse>
+              <g class="black-cat">
+                <path d="M158 91C141 108 141 141 149 173H237C244 143 242 111 225 90C210 76 174 77 158 91Z" fill="#34313a" stroke="#26242c" stroke-width="3" stroke-linejoin="round"></path>
+                <path d="M153 82C143 72 144 55 154 44L152 20Q152 13 159 18L177 32Q194 25 211 32L230 17Q237 14 238 22L241 48C252 60 249 77 237 87C224 100 166 99 153 82Z" fill="#34313a" stroke="#26242c" stroke-width="3" stroke-linejoin="round"></path>
+                <ellipse cx="177" cy="66" rx="3.5" ry="5" fill="#17161a"></ellipse>
+                <ellipse cx="218" cy="66" rx="3.5" ry="5" fill="#17161a"></ellipse>
+                <path d="M193 75Q197 79 201 75M197 78Q193 84 189 80M197 78Q202 84 206 80" fill="none" stroke="#17161a" stroke-width="2.5" stroke-linecap="round"></path>
+                <ellipse cx="172" cy="79" rx="7" ry="3.5" fill="#e58ca8" opacity=".8"></ellipse>
+                <ellipse cx="223" cy="79" rx="7" ry="3.5" fill="#e58ca8" opacity=".8"></ellipse>
+              </g>
+              <g class="white-cat">
+                <path d="M51 127C39 144 44 160 50 173H151C159 148 154 128 136 112C112 95 70 105 51 127Z" fill="#fffdfb" stroke="#34313a" stroke-width="3" stroke-linejoin="round"></path>
+                <path d="M55 119C44 108 45 89 56 77L54 54Q54 47 61 52L79 65Q96 59 113 66L131 52Q139 48 140 56L142 82C153 94 150 112 139 121C123 136 70 136 55 119Z" fill="#fffdfb" stroke="#34313a" stroke-width="3" stroke-linejoin="round"></path>
+                <ellipse cx="78" cy="96" rx="3.5" ry="5" fill="#27242d"></ellipse>
+                <ellipse cx="119" cy="96" rx="3.5" ry="5" fill="#27242d"></ellipse>
+                <path d="M94 104Q98 108 102 104M98 107Q93 113 88 109M98 107Q103 113 108 109" fill="none" stroke="#34313a" stroke-width="2.5" stroke-linecap="round"></path>
+                <ellipse cx="69" cy="106" rx="7" ry="3.5" fill="#ef9ab1" opacity=".8"></ellipse>
+                <ellipse cx="127" cy="106" rx="7" ry="3.5" fill="#ef9ab1" opacity=".8"></ellipse>
+                <path d="M47 93L34 89M47 100L32 100M146 92L158 88M146 100L160 101" fill="none" stroke="#34313a" stroke-width="2" stroke-linecap="round"></path>
+              </g>
+              <g class="hugging-paw">
+                <path d="M222 98C210 104 201 112 192 120C182 128 171 130 154 129C145 129 142 138 150 142C174 151 204 143 223 122C234 111 235 102 222 98Z" fill="#34313a" stroke="#26242c" stroke-width="3" stroke-linejoin="round"></path>
+                <ellipse cx="153" cy="136" rx="8" ry="6" fill="#514c58"></ellipse>
+              </g>
+              <g class="float-heart" fill="#ef8eae">
+                <path d="M143 38C136 32 127 39 143 51C159 39 150 32 143 38Z"></path>
+              </g>
+              <g class="float-heart" fill="#f3c878">
+                <path d="M247 83C241 78 234 84 247 95C260 84 253 78 247 83Z"></path>
+              </g>
+            </svg>
+            <p class="letter-text">
+              Hey Kim, I know you're not feeling okay right now, and it's okay lang naman.
+              You don't always have to be happy, and you don't have to force yourself to smile
+              kung hindi mo talaga feel.
+            </p>
+            <p class="letter-text">
+              I just want you to know na nandito lang ako palagi, okay? If you want to rant,
+              cry, be quiet, or even do nothing, that's fine with me. Hindi mo kailangang
+              i-explain lahat ng nararamdaman mo just to make me understand you.
+            </p>
+            <p class="letter-text">
+              Please don't be too hard on yourself, Kim. I know sometimes everything feels
+              overwhelming, and even you don't know what's wrong, but I hope you remember
+              na you're not alone.
+            </p>
+            <p class="letter-text">
+              I wish I could take away everything that's bothering you, pero for now, I hope
+              I can at least make your heavy days a little lighter. Don't think na napapagod
+              ako sa'yo just because you're having a bad day.
+            </p>
+            <p class="letter-text">
+              I love you, not just when you're happy and sweet, but also when you're sad,
+              moody, and not feeling yourself. Take your time, baby. You don't have to be okay
+              agad. I'm here, and I'll always try my best to understand you. I love you so much.
+            </p>
+          </article>
+        </div>
+      </div>
+
+      <p class="soft-reminder"><span>✦</span> Walang pressure. Nandito lang ako kapag kailangan mo.</p>
+    </section>
+  </main>
+
+  <script>
+    const readButton = document.getElementById("readButton");
+    const letterWrap = document.getElementById("letterWrap");
+    const hugButton = document.getElementById("hugButton");
+    const hugResponse = document.getElementById("hugResponse");
+    const hugStage = document.getElementById("hugStage");
+    const messageCard = document.querySelector(".message-card");
+    const letter = document.querySelector(".letter");
+    let letterAnimationPrepared = false;
+
+    function prepareLetterAnimation() {
+      if (letterAnimationPrepared) return;
+      let wordIndex = 0;
+
+      letter.querySelectorAll(".letter-text").forEach(paragraph => {
+        const words = paragraph.textContent.trim().split(/\s+/);
+        const content = document.createDocumentFragment();
+
+        words.forEach((word, index) => {
+          const span = document.createElement("span");
+          span.className = "letter-word";
+          span.textContent = word;
+          span.style.setProperty("--word-index", wordIndex);
+          wordIndex += 1;
+          content.appendChild(span);
+          if (index < words.length - 1) content.appendChild(document.createTextNode(" "));
+        });
+
+        paragraph.replaceChildren(content);
+      });
+
+      letterAnimationPrepared = true;
+    }
+
+    readButton.addEventListener("click", () => {
+      const isOpen = letterWrap.classList.toggle("open");
+      readButton.setAttribute("aria-expanded", String(isOpen));
+      letterWrap.setAttribute("aria-hidden", String(!isOpen));
+      readButton.textContent = isOpen ? "Isara muna ang liham" : "Buksan ang liham ✦";
+      if (isOpen) {
+        prepareLetterAnimation();
+        letter.classList.remove("typing");
+        void letter.offsetWidth;
+        letter.classList.add("typing");
+      } else {
+        letter.classList.remove("typing");
+      }
+    });
+
+    hugButton.addEventListener("click", () => {
+      hugStage.classList.add("visible");
+      hugStage.setAttribute("aria-hidden", "false");
+      hugStage.classList.remove("hugging");
+      void hugStage.offsetWidth;
+      hugStage.classList.add("hugging");
+
+      const card = messageCard.getBoundingClientRect();
+      const originX = card.left + card.width / 2;
+      const originY = card.top + Math.min(card.height * .45, 240);
+      const hearts = ["♡", "♥", "✦"];
+
+      hugResponse.textContent = "Yakap na mahigpit at isang kiss para sa'yo! 🤍💋";
+
+      for (let index = 0; index < 14; index += 1) {
+        const heart = document.createElement("span");
+        heart.className = "hug-heart";
+        heart.setAttribute("aria-hidden", "true");
+        heart.textContent = hearts[index % hearts.length];
+        heart.style.left = `${originX + (Math.random() - .5) * 170}px`;
+        heart.style.top = `${originY + 35}px`;
+        heart.style.fontSize = `${14 + Math.random() * 14}px`;
+        heart.style.setProperty("--drift", `${(Math.random() - .5) * 80}px`);
+        heart.style.setProperty("--duration", `${1.5 + Math.random() * 1.2}s`);
+        document.body.appendChild(heart);
+        heart.addEventListener("animationend", () => heart.remove(), { once: true });
+      }
+    });
+  </script>
+</body>
+</html>
